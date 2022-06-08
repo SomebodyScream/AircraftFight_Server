@@ -14,14 +14,33 @@
         <url-pattern>/match</url-pattern>
     </servlet-mapping>
 
-
     <servlet>
-        <servlet-name>Authentication</servlet-name>
-        <servlet-class>Authentication</servlet-class>
+        <servlet-name>versus</servlet-name>
+        <servlet-class>Versus</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Authentication</servlet-name>
-        <url-pattern>/login/authentication</url-pattern>
+        <servlet-name>versus</servlet-name>
+        <url-pattern>/versus</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Login</servlet-name>
+        <servlet-class>Login</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Login</servlet-name>
+        <url-pattern>/aut/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Register</servlet-name>
+        <servlet-class>Register</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Register</servlet-name>
+        <url-pattern>/aut/regis</url-pattern>
     </servlet-mapping>
 </web-app>

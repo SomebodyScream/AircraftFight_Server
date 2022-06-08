@@ -4,11 +4,31 @@ import java.util.Queue;
 
 public class RoomManager
 {
+    private static RoomManager roomManager = new RoomManager();
+
+    /**
+     * rooms waiting for matching opponent
+     */
     private final Queue<String> availableRooms = new LinkedList<>();
 
+    /**
+     * roomId -> GameRoom instance mapping
+     * maintaining existing room
+     */
     private final HashMap<String, GameRoom> roomMap = new HashMap<>();
 
+    /**
+     * playerId -> GameRoom instance mapping
+     * maintaining players who have already entered a room
+     */
     private final HashMap<String, GameRoom> playerToRoomMap = new HashMap<>();
+
+    private RoomManager(){
+    }
+
+    public static RoomManager getInstance(){
+        return roomManager;
+    }
 
     public String createRoom() {
         return createRoom(null, null);
@@ -18,6 +38,13 @@ public class RoomManager
         return createRoom(player1, null);
     }
 
+    /**
+     * Create a new room. It will link the player(s) to the new room.
+     * Use "getRoomOfPlayer" method to query which room is a certain player in.
+     * @param player1 ID of player1 (null is allowed)
+     * @param player2 ID of player2 (null is allowed)
+     * @return unique ID of the new room
+     */
     public String createRoom(String player1, String player2)
     {
         GameRoom room = new GameRoom(player1, player2);
@@ -32,6 +59,14 @@ public class RoomManager
         }
 
         return roomId;
+    }
+
+    public void removeRoom(String roomId) {
+        roomMap.remove(roomId);
+    }
+
+    public GameRoom getRoomById(String roomId){
+        return roomMap.getOrDefault(roomId, null);
     }
 
     public boolean hasAvailableRoom(){
@@ -56,7 +91,7 @@ public class RoomManager
     }
 
     public boolean addPlayerToRoom(String player, String roomId){
-        GameRoom room = roomMap.get(roomId);
+        GameRoom room = getRoomById(roomId);
         if(room != null) {
             boolean result = room.addPlayer(player);
             if(result){

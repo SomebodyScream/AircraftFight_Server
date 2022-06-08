@@ -4,21 +4,31 @@ import javax.servlet.http.*;
 
 public class MatchOpponent extends HttpServlet
 {
-    private static RoomManager roomManager;
+//    private static RoomManager roomManager;
 
     @Override
     public void init() throws ServletException {
         System.out.println("test init");
-        roomManager = new RoomManager();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        System.out.println("doGet start");
+//        System.out.println("doGet start");
+
+//        HttpSession session = req.getSession(true);
 
         String user = req.getParameter("user");
-        System.out.println(user);
+
+//        if(session.isNew()){
+//            user = req.getParameter("user");
+//            session.setAttribute("user", user);
+//        }
+//        else{
+//            user = (String) session.getAttribute("user");
+//        }
+
+//        System.out.println("user: " + user);
 
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json;charset = utf-8");
@@ -27,6 +37,7 @@ public class MatchOpponent extends HttpServlet
 
         synchronized (this)
         {
+            RoomManager roomManager = RoomManager.getInstance();
             GameRoom room = roomManager.getRoomOfPlayer(user);
             if(room != null)
             {

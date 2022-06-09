@@ -4,6 +4,9 @@ import java.util.Queue;
 
 public class RoomManager
 {
+    /**
+     * singleton
+     */
     private static RoomManager roomManager = new RoomManager();
 
     /**
@@ -52,31 +55,51 @@ public class RoomManager
         roomMap.put(roomId, room);
 
         if(player1 != null){
-            playerToRoomMap.put(player1, room);
+            bindRoomToPlayer(player1, room);
         }
         if(player2 != null){
-            playerToRoomMap.put(player2, room);
+            bindRoomToPlayer(player2, room);
         }
 
         return roomId;
     }
 
-    public void removeRoom(String roomId) {
+    /**
+     * remove room with specified roomId
+     */
+    public void removeRoom(String roomId)
+    {
+        GameRoom room = roomMap.get(roomId);
+        playerToRoomMap.remove(room.getPlayer1(), room);
+        playerToRoomMap.remove(room.getPlayer2(), room);
         roomMap.remove(roomId);
     }
 
+    /**
+     * get room with specified roomId
+     * @return GameRoom object or null when roomId does not exist
+     */
     public GameRoom getRoomById(String roomId){
         return roomMap.getOrDefault(roomId, null);
     }
 
+    /**
+     * whether there is room available for a new game
+     */
     public boolean hasAvailableRoom(){
         return !availableRooms.isEmpty();
     }
 
+    /**
+     * add room with specified roomId to available room queue
+     */
     public void addRoomToQueue(String roomId) {
         availableRooms.add(roomId);
     }
 
+    /**
+     * poll a room from available room queue
+     */
     public String pollRoomFromQueue()
     {
         String roomId = availableRooms.poll();
@@ -86,18 +109,37 @@ public class RoomManager
         return roomId;
     }
 
-    public GameRoom getRoomOfPlayer(String player){
-        return playerToRoomMap.get(player);
+    /**
+     * get room where the specified player is in
+     */
+    public GameRoom getRoomOfPlayer(String playerId){
+        return playerToRoomMap.get(playerId);
     }
 
-    public boolean addPlayerToRoom(String player, String roomId){
+    /**
+     * add the player to the room
+     * @return whether the addition is success
+     */
+    public boolean addPlayerToRoom(String playerId, String roomId)
+    {
         GameRoom room = getRoomById(roomId);
-        if(room != null) {
-            boolean result = room.addPlayer(player);
+        if(room != null)
+        {
+            boolean result = room.addPlayer(playerId);
             if(result){
-                playerToRoomMap.put(player, room);
+                bindRoomToPlayer(playerId, room);
+                return true;
             }
         }
         return false;
+    }
+
+    private void bindRoomToPlayer(String playerId, GameRoom room){
+        if(playerToRoomMap.containsKey(playerId)){
+            playerToRoomMap.replace(playerId, room);
+        }
+        else{
+            playerToRoomMap.put(playerId, room);
+        }
     }
 }

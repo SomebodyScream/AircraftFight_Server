@@ -50,7 +50,7 @@ public class Versus extends HttpServlet
                     if(room.isAnotherPlayerGameOver(playerId))
                     {
                         room.setRoomState(GameRoom.INVALID);
-//                        roomManager.removeRoom(room.getRoomId());
+                        roomManager.removeRoom(room.getRoomId());
                     }
 
                 } catch (PlayerNotFoundException e) {

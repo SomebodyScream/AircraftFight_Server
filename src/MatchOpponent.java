@@ -9,21 +9,6 @@ public class MatchOpponent extends HttpServlet
     {
         String user = req.getParameter("user");
 
-        /**
-         * Possibly used in future
-         * Do not delete for the time being
-         */
-        /*
-        HttpSession session = req.getSession(true);
-        if(session.isNew()){
-            user = req.getParameter("user");
-            session.setAttribute("user", user);
-        }
-        else{
-            user = (String) session.getAttribute("user");
-        }
-         */
-
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json;charset = utf-8");
 

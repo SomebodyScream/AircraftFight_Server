@@ -29,33 +29,28 @@ public class Versus extends HttpServlet
 
         if(room != null)
         {
-            if(!isGameOver)
-            {
-                int opponentScore = -1;
-                try {
-                    room.setPlayerScoreById(playerId, score);
-                    opponentScore = room.getAnotherPlayerScore(playerId);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try{
+                int opponentScore = room.getAnotherPlayerScore(playerId);
 
-                PrintWriter out = resp.getWriter();
-                String jsonData = "{\"score\":" + opponentScore + "}";
-                out.write(jsonData);
-            }
-            else
-            {
-                try {
+                if(!isGameOver) {
+                    room.setPlayerScoreById(playerId, score);
+                }
+                else
+                {
                     room.setPlayerGameOver(playerId);
                     if(room.isAnotherPlayerGameOver(playerId))
                     {
                         room.setRoomState(GameRoom.INVALID);
                         roomManager.removeRoom(room.getRoomId());
                     }
-
-                } catch (PlayerNotFoundException e) {
-                    e.printStackTrace();
                 }
+
+                PrintWriter out = resp.getWriter();
+                String jsonData = "{\"score\":" + opponentScore + "}";
+                out.write(jsonData);
+            }
+            catch (Exception e){
+                e.printStackTrace();
             }
         }
     }

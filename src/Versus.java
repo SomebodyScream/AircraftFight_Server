@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 public class Versus extends HttpServlet
 {
@@ -40,6 +41,14 @@ public class Versus extends HttpServlet
                     room.setPlayerGameOver(playerId);
                     if(room.isAnotherPlayerGameOver(playerId))
                     {
+                        String opponentId = room.getAnotherPlayerId(playerId);
+                        int mscore = room.getPlayerScoreById(playerId);
+                        int gscore = room.getPlayerScoreById(opponentId);
+                        String time = (new Date()).toString();
+
+                        RecordDatabaseHelper.addRecordToDatabase(playerId, mscore, opponentId, gscore, time);
+                        RecordDatabaseHelper.addRecordToDatabase(opponentId, gscore, playerId, mscore, time);
+
                         room.setRoomState(GameRoom.INVALID);
                         roomManager.removeRoom(room.getRoomId());
                     }

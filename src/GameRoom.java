@@ -8,12 +8,12 @@ public class GameRoom
     public static final int READY = 2;
     public static final int GAMING = 3;
 
-    public String roomId;
-    public String player1;
-    public String player2;
+    private String roomId;
+    private String player1;
+    private String player2;
     private PlayerState statePlayer1;
     private PlayerState statePlayer2;
-    public int state;
+    private int state;
 
     public GameRoom(String player1, String player2)
     {

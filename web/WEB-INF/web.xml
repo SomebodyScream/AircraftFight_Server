@@ -43,4 +43,15 @@
         <servlet-name>Register</servlet-name>
         <url-pattern>/aut/regis</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>recordsGet</servlet-name>
+        <servlet-class>Record</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>recordsGet</servlet-name>
+        <url-pattern>/rec</url-pattern>
+    </servlet-mapping>
+
 </web-app>

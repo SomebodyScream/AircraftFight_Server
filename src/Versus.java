@@ -36,6 +36,7 @@ public class Versus extends HttpServlet
             if(room != null)
             {
                 try{
+                    String opponentId = room.getAnotherPlayerId(playerId);
                     int opponentScore = room.getAnotherPlayerScore(playerId);
 
                     if(!isGameOver) {
@@ -46,7 +47,6 @@ public class Versus extends HttpServlet
                         room.setPlayerGameOver(playerId);
                         if(room.isAnotherPlayerGameOver(playerId))
                         {
-                            String opponentId = room.getAnotherPlayerId(playerId);
                             int mscore = room.getPlayerScoreById(playerId);
                             int gscore = room.getPlayerScoreById(opponentId);
 
@@ -66,7 +66,7 @@ public class Versus extends HttpServlet
                     }
 
                     PrintWriter out = resp.getWriter();
-                    String jsonData = "{\"score\":" + opponentScore + "}";
+                    String jsonData = "{\"score\":" + opponentScore + ", \"opponentId\":" + opponentId + "}";
                     out.write(jsonData);
                 }
                 catch (Exception e){

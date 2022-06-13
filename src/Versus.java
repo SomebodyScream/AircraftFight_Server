@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Versus extends HttpServlet
@@ -28,38 +31,47 @@ public class Versus extends HttpServlet
         RoomManager roomManager = RoomManager.getInstance();
         GameRoom room = roomManager.getRoomOfPlayer(playerId);
 
-        if(room != null)
+        synchronized (this)
         {
-            try{
-                int opponentScore = room.getAnotherPlayerScore(playerId);
+            if(room != null)
+            {
+                try{
+                    int opponentScore = room.getAnotherPlayerScore(playerId);
 
-                if(!isGameOver) {
-                    room.setPlayerScoreById(playerId, score);
-                }
-                else
-                {
-                    room.setPlayerGameOver(playerId);
-                    if(room.isAnotherPlayerGameOver(playerId))
-                    {
-                        String opponentId = room.getAnotherPlayerId(playerId);
-                        int mscore = room.getPlayerScoreById(playerId);
-                        int gscore = room.getPlayerScoreById(opponentId);
-                        String time = (new Date()).toString();
-
-                        RecordDatabaseHelper.addRecordToDatabase(playerId, mscore, opponentId, gscore, time);
-                        RecordDatabaseHelper.addRecordToDatabase(opponentId, gscore, playerId, mscore, time);
-
-                        room.setRoomState(GameRoom.INVALID);
-                        roomManager.removeRoom(room.getRoomId());
+                    if(!isGameOver) {
+                        room.setPlayerScoreById(playerId, score);
                     }
-                }
+                    else
+                    {
+                        room.setPlayerGameOver(playerId);
+                        if(room.isAnotherPlayerGameOver(playerId))
+                        {
+                            String opponentId = room.getAnotherPlayerId(playerId);
+                            int mscore = room.getPlayerScoreById(playerId);
+                            int gscore = room.getPlayerScoreById(opponentId);
 
-                PrintWriter out = resp.getWriter();
-                String jsonData = "{\"score\":" + opponentScore + "}";
-                out.write(jsonData);
-            }
-            catch (Exception e){
-                e.printStackTrace();
+                            // get current time
+                            DateFormat df = new SimpleDateFormat("yyyy/MM/dd/ HH:mm:ss");
+                            Date date = Calendar.getInstance().getTime();
+                            String time = df.format(date);
+
+                            // save record to database
+                            RecordDatabaseHelper.addRecordToDatabase(playerId, mscore, opponentId, gscore, time);
+                            RecordDatabaseHelper.addRecordToDatabase(opponentId, gscore, playerId, mscore, time);
+
+                            // remove this room
+                            room.setRoomState(GameRoom.INVALID);
+                            roomManager.removeRoom(room.getRoomId());
+                        }
+                    }
+
+                    PrintWriter out = resp.getWriter();
+                    String jsonData = "{\"score\":" + opponentScore + "}";
+                    out.write(jsonData);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     }
